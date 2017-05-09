@@ -8,11 +8,11 @@ trait CacheReader
     {
         $model = null;
 
-        if (!\Cache::has($class . $id)) {
+        if (!\Cache::has($class.$id)) {
             $model = $class::find($id);
             $class::addOrUpdateInCache($model);
         }
 
-        return $model ?: \Cache::get($class . $id);
+        return $model ?: \Cache::get($class.$id);
     }
 }
