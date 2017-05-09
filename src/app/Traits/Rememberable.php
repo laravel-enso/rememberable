@@ -21,7 +21,7 @@ trait Rememberable
         });
     }
 
-    private static function addOrUpdateInCache($model)
+    public static function addOrUpdateInCache($model)
     {
         $cacheLifetime = $model->cacheLifetime ?: config('laravel-enso.cacheLifetime');
         $cacheLifetime = $cacheLifetime ?: 60;
