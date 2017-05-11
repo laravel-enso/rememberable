@@ -29,7 +29,7 @@ trait Rememberable
         \Cache::put(get_class($model).$model->id, $model, $cacheLifetime);
     }
 
-    private function removeFromCache($model)
+    private static function removeFromCache($model)
     {
         \Cache::forget(get_class($model).$model->id);
     }
