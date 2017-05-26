@@ -6,6 +6,10 @@ trait CacheReader
 {
     private function getModelFromCache($class, $id)
     {
+    	if (!$id) {
+    		return null;
+    	}
+
         $model = null;
 
         if (!\Cache::has($class.$id)) {
