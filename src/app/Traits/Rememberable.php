@@ -26,11 +26,11 @@ trait Rememberable
         $cacheLifetime = $model->cacheLifetime ?: config('laravel-enso.cacheLifetime');
         $cacheLifetime = $cacheLifetime ?: 60;
 
-        \Cache::put(get_class($model).$model->id, $model, $cacheLifetime);
+        cache()->put(get_class($model).$model->id, $model, $cacheLifetime);
     }
 
     private static function removeFromCache($model)
     {
-        \Cache::forget(get_class($model).$model->id);
+        cache()->forget(get_class($model).$model->id);
     }
 }
