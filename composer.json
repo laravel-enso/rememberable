@@ -1,5 +1,5 @@
 {
-    "name": "laravel-enso/rememberablemodels",
+    "name": "laravel-enso/rememberable",
     "description": "Trait for caching Laravel models",
     "type": "trait",
     "license": "MIT",

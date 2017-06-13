@@ -1,18 +1,18 @@
 # Rememberable Models
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/36ec1babaf3e413793c41c54088baa86)](https://www.codacy.com/app/laravel-enso/rememberable-models?utm_source=github.com&utm_medium=referral&utm_content=laravel-enso/rememberable-models&utm_campaign=badger)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/36ec1babaf3e413793c41c54088baa86)](https://www.codacy.com/app/laravel-enso/rememberable?utm_source=github.com&utm_medium=referral&utm_content=laravel-enso/rememberable&utm_campaign=badger)
 [![StyleCI](https://styleci.io/repos/90758167/shield?branch=master)](https://styleci.io/repos/90758167)
-[![Total Downloads](https://poser.pugx.org/laravel-enso/rememberable-models/downloads)](https://packagist.org/packages/laravel-enso/rememberable-models)
-[![Latest Stable Version](https://poser.pugx.org/laravel-enso/rememberable-models/version)](https://packagist.org/packages/laravel-enso/rememberable-models)
+[![Total Downloads](https://poser.pugx.org/laravel-enso/rememberable/downloads)](https://packagist.org/packages/laravel-enso/rememberable)
+[![Latest Stable Version](https://poser.pugx.org/laravel-enso/rememberable/version)](https://packagist.org/packages/laravel-enso/rememberable)
 
 Trait for caching Laravel models
 
 ### Use
 
-1. Put `use Rememberable` in the CachedModel that you want to track.
+1. Add `use Rememberable` in the CachedModel that you want to track.
 
 2. The default duration for cache is 60 minutes. If you need a different duration set a `protected property $cacheLifetime = 123;` in the CachedModel.
 
-3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel put `use CacheReader`.
+3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel add `use CacheReader`.
 
 4. Define a method in the RemoteModel as below:
 
