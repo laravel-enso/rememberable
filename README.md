@@ -8,20 +8,20 @@ Trait for caching Laravel models
 
 ### Use
 
-1. Add `use Rememberable` in the CachedModel that you want to track.
+1. Put `use Rememberable` in the CachedModel that you want to track.
 
-2. The default duration for cache is 60 minutes. If you need a different duration set a `protected property $cacheLifetime = 123;` in the CachedModel.
+2. The default caching duration is 60 minutes. If you need to change it, create a `protected property $cacheLifetime = 123;` in your CachedModel.
 
-3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel add `use CacheReader`.
+3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel put `use CacheReader`.
 
 4. Define a method in the RemoteModel as below:
 
-```
-public function getCachedModel()
-    {
-        return $this->getModelFromCache(CachedModel::class, $this->cached_model_id);
-    }
-```
+    ```
+    public function getCachedModel()
+        {
+            return $this->getModelFromCache(CachedModel::class, $this->cached_model_id);
+        }
+    ```
 
 5. You can call the relation like this: `$remoteModel->getCachedModel()->chainOtherRelationsOrMethods`.
 
@@ -29,7 +29,7 @@ public function getCachedModel()
 
 ### Note
 
-The laravel-enso/core package comes with this library included.
+The [laravel-enso/core](https://github.com/laravel-enso/Core) package comes with this library included.
 
 ### Contributions
 
