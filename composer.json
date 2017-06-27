@@ -1,16 +1,16 @@
 {
     "name": "laravel-enso/rememberable",
-    "description": "Trait for caching Laravel models",
-    "type": "trait",
+    "description": "Model caching dependency for Laravel Enso",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "mishu",
+            "name": "Mishu",
             "email": "mishu@xtelecom.ro"
         }
     ],
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1.0",
         "laravel/framework": "5.4.*"
     },
     "autoload": {

@@ -4,7 +4,7 @@
 [![Total Downloads](https://poser.pugx.org/laravel-enso/rememberable/downloads)](https://packagist.org/packages/laravel-enso/rememberable)
 [![Latest Stable Version](https://poser.pugx.org/laravel-enso/rememberable/version)](https://packagist.org/packages/laravel-enso/rememberable)
 
-Trait for caching Laravel models
+Model caching dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
 ### Use
 
@@ -27,9 +27,9 @@ Trait for caching Laravel models
 
 6. You can use the `CacheReader` trait in any class where you want to get a cached model like this: `$this->getModelFromCache(CachedModel::class, $cachedModelId)`.
 
-### Note
+### Notes
 
-The [laravel-enso/core](https://github.com/laravel-enso/Core) package comes with this library included.
+The [Laravel Enso Core](https://github.com/laravel-enso/Core) package comes with this package included.
 
 ### Contributions
 
