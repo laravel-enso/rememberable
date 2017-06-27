@@ -6,6 +6,12 @@
 
 Model caching dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
+### Details
+
+- brings helper methods for quick and easy cache usage (setting and retrieving)
+- the cache lifetime may be set per model, else, if not set, the per-project setting is used, finally falling back to a default of 60 minutes if neither option is available
+- uses the Laravel `cache()` helper method so is transparent to the cache mechanism/implementation
+
 ### Use
 
 1. Put `use Rememberable` in the CachedModel that you want to track.
