@@ -1,12 +1,21 @@
 {
     "name": "laravel-enso/rememberable",
     "description": "Model caching dependency for Laravel Enso",
+    "keywords": [
+        "laravel-enso",
+        "rememberable",
+        "laravel-cache",
+        "model-cache"
+    ],
+    "homepage": "https://github.com/laravel-enso/Rememberable",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Mishu",
-            "email": "mishu@xtelecom.ro"
+            "name": "Adrian Ocneanu",
+            "email": "aocneanu@gmail.com",
+            "homepage": "https://laravel-enso.com",
+            "role": "Developer"
         }
     ],
     "require": {
