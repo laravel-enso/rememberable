@@ -64,4 +64,3 @@ class RememberableModel extends Model
 
     protected $fillable = ['name'];
 }
-
