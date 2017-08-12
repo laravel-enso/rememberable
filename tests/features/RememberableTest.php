@@ -23,7 +23,7 @@ class RememberableTest extends TestHelper
     {
         $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
 
-        $this->assertEquals(cache()->get('RememberableModel'.$rememberableModel->id), $rememberableModel);
+        $this->assertEquals($rememberableModel, cache()->get('RememberableModel'.$rememberableModel->id));
     }
 
     /** @test */
@@ -44,7 +44,6 @@ class RememberableTest extends TestHelper
 
         $rememberableModel->delete();
 
-        $this->assertNull($rememberableModel->fresh());
         $this->assertFalse(cache()->has('RememberableModel'.$rememberableModel->id));
     }
 
