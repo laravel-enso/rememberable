@@ -4,7 +4,7 @@ namespace LaravelEnso\RememberableModels\app\Traits;
 
 trait Rememberable
 {
-    // protected static $cacheLifetime = 60; // optional
+    // protected static $cacheLifetime = 600; // optional
 
     protected static function bootRememberable()
     {
@@ -23,8 +23,7 @@ trait Rememberable
 
     public static function addOrUpdateInCache($model)
     {
-        $cacheLifetime = $model->cacheLifetime ?: config('laravel-enso.cacheLifetime');
-        $cacheLifetime = $cacheLifetime ?: 60;
+        $cacheLifetime = $model->cacheLifetime ?: config('enso.config.cacheLifetime');
 
         cache()->put(get_class($model).$model->id, $model, $cacheLifetime);
     }
