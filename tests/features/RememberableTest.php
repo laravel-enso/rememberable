@@ -4,9 +4,9 @@ use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use LaravelEnso\RememberableModels\app\Traits\Rememberable;
-use LaravelEnso\TestHelper\app\Classes\TestHelper;
+use Tests\TestCase;
 
-class RememberableTest extends TestHelper
+class RememberableTest extends TestCase
 {
     private $faker;
 
@@ -23,7 +23,7 @@ class RememberableTest extends TestHelper
     {
         $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
 
-        $this->assertEquals($rememberableModel, cache()->get('RememberableModel'.$rememberableModel->id));
+        $this->assertEquals($rememberableModel, cache()->get('RememberableModel' . $rememberableModel->id));
     }
 
     /** @test */
@@ -34,7 +34,7 @@ class RememberableTest extends TestHelper
         $rememberableModel->name = 'Updated';
         $rememberableModel->save();
 
-        $this->assertTrue(cache()->get('RememberableModel'.$rememberableModel->id)->name === 'Updated');
+        $this->assertTrue(cache()->get('RememberableModel' . $rememberableModel->id)->name === 'Updated');
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class RememberableTest extends TestHelper
 
         $rememberableModel->delete();
 
-        $this->assertFalse(cache()->has('RememberableModel'.$rememberableModel->id));
+        $this->assertFalse(cache()->has('RememberableModel' . $rememberableModel->id));
     }
 
     private function createRememberableModelsTable()
