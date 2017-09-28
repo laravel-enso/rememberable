@@ -23,12 +23,12 @@ class CacheReaderTest extends TestCase
     /** @test */
     public function gets_cached_model_from_remote_model()
     {
-        $cachedModel                  = CachedModel::create(['name' => $this->faker->word]);
-        $remoteModel                  = RemoteModel::make(['name' => $this->faker->word]);
+        $cachedModel = CachedModel::create(['name' => $this->faker->word]);
+        $remoteModel = RemoteModel::make(['name' => $this->faker->word]);
         $remoteModel->cached_model_id = $cachedModel->id;
         $remoteModel->save();
 
-        $this->assertTrue(cache()->has('CachedModel' . $cachedModel->id));
+        $this->assertTrue(cache()->has('CachedModel'.$cachedModel->id));
         $this->assertEquals($cachedModel, $remoteModel->getCachedModel());
     }
 
