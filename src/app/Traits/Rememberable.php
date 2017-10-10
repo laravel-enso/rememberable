@@ -23,7 +23,7 @@ trait Rememberable
 
     public static function addOrUpdateInCache($model)
     {
-        $cacheLifetime = $model->cacheLifetime ?: config('enso.config.cacheLifetime');
+        $cacheLifetime = $model->cacheLifetime ?: config('laravel-enso.cacheLifetime');
 
         cache()->put(get_class($model).$model->id, $model, $cacheLifetime);
     }
