@@ -11,17 +11,17 @@ Model caching dependency for [Laravel Enso](https://github.com/laravel-enso/Enso
 
 ### Details
 
-- brings helper methods for quick and easy cache usage (setting and retrieving)
+- comes with 2 traits with helper methods for quick and easy caching usage (setting and retrieving)
 - the cache lifetime may be set per model, else, if not set, the per-project setting is used, finally falling back to a default of 60 minutes if neither option is available
 - uses the Laravel `cache()` helper method so is transparent to the cache mechanism/implementation
 
 ### Use
 
-1. Put `use Rememberable` in the CachedModel that you want to track.
+1. Use the `Rememberable` trait in the CachedModel that you want to track
 
-2. The default caching duration is 60 minutes. If you need to change it, create a `protected property $cacheLifetime = 123;` in your CachedModel.
+2. The default caching duration is 60 minutes. If you need to change it per model, create a `protected property $cacheLifetime = 123;` in your CachedModel
 
-3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel put `use CacheReader`.
+3. In the RemoteModel where you have a `belongsTo` relationship to the CachedModel put `use CacheReader`
 
 4. Define a method in the RemoteModel as below:
 
@@ -32,11 +32,14 @@ Model caching dependency for [Laravel Enso](https://github.com/laravel-enso/Enso
     }
     ```
 
-5. You can call the relation like this: `$remoteModel->getCachedModel()->chainOtherRelationsOrMethods`.
+5. You can call the relation like this: `$remoteModel->getCachedModel()->chainOtherRelationsOrMethods`
 
-6. You can use the `CacheReader` trait in any class where you want to get a cached model like this: `$this->getModelFromCache(CachedModel::class, $cachedModelId)`.
+6. You can use the `CacheReader` trait in any class where you want to get a cached model like this: `$this->getModelFromCache(CachedModel::class, $cachedModelId)`
 
 ### Notes
+
+You may set the global cache lifetime in the `config/enso/config.php` file directly or
+add/set the `CACHE_LIFETIME` key in you `.env` file (recommended).
 
 The [Laravel Enso Core](https://github.com/laravel-enso/Core) package comes with this package included.
 
