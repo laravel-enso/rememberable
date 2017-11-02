@@ -13,7 +13,7 @@ trait CacheReader
 
             if (!$model) {
                 throw new \LogicException(
-                    __(sprintf("No model of class: %s having the id: %s found", $class, $id))
+                    __(sprintf('No model of class: %s having the id: %s found', $class, $id))
                 );
             }
 
