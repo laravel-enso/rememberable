@@ -7,16 +7,16 @@ trait CacheReader
     private function getModelFromCache($class, $id)
     {
         if (!$id) {
-            return null;
+            return;
         }
 
         $model = null;
 
-        if (!cache()->has($class . $id)) {
+        if (!cache()->has($class.$id)) {
             $model = $class::find($id);
             $class::addOrUpdateInCache($model);
         }
 
-        return $model ?: cache()->get($class . $id);
+        return $model ?: cache()->get($class.$id);
     }
 }
