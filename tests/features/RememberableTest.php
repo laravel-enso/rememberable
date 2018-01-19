@@ -23,7 +23,7 @@ class RememberableTest extends TestCase
     {
         $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
 
-        $this->assertEquals($rememberableModel, cache()->get('RememberableModel'.$rememberableModel->id));
+        $this->assertEquals($rememberableModel, cache()->get('RememberableModel:'.$rememberableModel->id));
     }
 
     /** @test */
@@ -34,7 +34,7 @@ class RememberableTest extends TestCase
         $rememberableModel->name = 'Updated';
         $rememberableModel->save();
 
-        $this->assertTrue(cache()->get('RememberableModel'.$rememberableModel->id)->name === 'Updated');
+        $this->assertTrue(cache()->get('RememberableModel:'.$rememberableModel->id)->name === 'Updated');
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class RememberableTest extends TestCase
 
         $rememberableModel->delete();
 
-        $this->assertFalse(cache()->has('RememberableModel'.$rememberableModel->id));
+        $this->assertFalse(cache()->has('RememberableModel:'.$rememberableModel->id));
     }
 
     private function createRememberableModelsTable()
