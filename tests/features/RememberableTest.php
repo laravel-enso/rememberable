@@ -15,36 +15,52 @@ class RememberableTest extends TestCase
         parent::setUp();
 
         $this->faker = Factory::create();
+
         $this->createRememberableModelsTable();
     }
 
     /** @test */
     public function adds_model_to_cache_when_creating()
     {
-        $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
+        $rememberableModel = $this->createRememberableModel();
 
-        $this->assertEquals($rememberableModel, cache()->get('RememberableModel:'.$rememberableModel->id));
+        $this->assertEquals(
+            $rememberableModel,
+            cache()->get('RememberableModel:'.$rememberableModel->id)
+        );
     }
 
     /** @test */
-    public function updated_model_in_cache_when_updating()
+    public function updates_model_in_cache_when_updating()
     {
-        $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
+        $rememberableModel = $this->createRememberableModel();
 
         $rememberableModel->name = 'Updated';
         $rememberableModel->save();
 
-        $this->assertTrue(cache()->get('RememberableModel:'.$rememberableModel->id)->name === 'Updated');
+        $this->assertEquals(
+            'Updated',
+            cache()->get('RememberableModel:'.$rememberableModel->id)->name
+        );
     }
 
     /** @test */
-    public function remove_model_from_cache_when_deleting()
+    public function removes_model_from_cache_when_deleting()
     {
-        $rememberableModel = RememberableModel::create(['name' => $this->faker->word]);
+        $rememberableModel = $this->createRememberableModel();
 
         $rememberableModel->delete();
 
-        $this->assertFalse(cache()->has('RememberableModel'.$rememberableModel->id));
+        $this->assertFalse(
+            cache()->has('RememberableModel'.$rememberableModel->id)
+        );
+    }
+
+    private function createRememberableModel()
+    {
+        return RememberableModel::create([
+            'name' => $this->faker->word
+        ]);
     }
 
     private function createRememberableModelsTable()

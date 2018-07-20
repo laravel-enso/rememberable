@@ -16,6 +16,7 @@ class CacheReaderTest extends TestCase
         parent::setUp();
 
         $this->faker = Factory::create();
+
         $this->createCachedModelsTable();
         $this->createRemoteModelsTable();
     }
@@ -23,13 +24,23 @@ class CacheReaderTest extends TestCase
     /** @test */
     public function gets_cached_model_from_remote_model()
     {
-        $cachedModel = CachedModel::create(['name' => $this->faker->word]);
-        $remoteModel = RemoteModel::make(['name' => $this->faker->word]);
-        $remoteModel->cached_model_id = $cachedModel->id;
-        $remoteModel->save();
+        $cachedModel = CachedModel::create([
+            'name' => $this->faker->word
+        ]);
 
-        $this->assertTrue(cache()->has('CachedModel:'.$cachedModel->id));
-        $this->assertEquals($cachedModel, $remoteModel->getCachedModel());
+        $remoteModel = RemoteModel::create([
+            'name' => $this->faker->word,
+            'cached_model_id' => $cachedModel->id
+        ]);
+
+        $this->assertTrue(
+            cache()->has('CachedModel:'.$cachedModel->id)
+        );
+
+        $this->assertEquals(
+            $cachedModel,
+            $remoteModel->getCachedModel()
+        );
     }
 
     private function createCachedModelsTable()
@@ -63,7 +74,7 @@ class RemoteModel extends Model
 {
     use CacheReader;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['cached_model_id', 'name'];
 
     public function cachedModel()
     {
@@ -72,6 +83,9 @@ class RemoteModel extends Model
 
     public function getCachedModel()
     {
-        return $this->getModelFromCache(CachedModel::class, $this->cached_model_id);
+        return $this->getModelFromCache(
+            CachedModel::class,
+            $this->cached_model_id
+        );
     }
 }
