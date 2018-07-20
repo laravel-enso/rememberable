@@ -9,7 +9,7 @@ trait CacheReader
     private function getModelFromCache($class, $id)
     {
         if (!$id) {
-            return null;
+            return;
         }
 
         $model = null;
