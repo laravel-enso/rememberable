@@ -14,9 +14,9 @@ class RememberableTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
-
         $this->createRememberableModelsTable();
+
+        $this->faker = Factory::create();
     }
 
     /** @test */
@@ -36,6 +36,7 @@ class RememberableTest extends TestCase
         $rememberableModel = $this->createRememberableModel();
 
         $rememberableModel->name = 'Updated';
+
         $rememberableModel->save();
 
         $this->assertEquals(

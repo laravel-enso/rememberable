@@ -15,10 +15,10 @@ class CacheReaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
+        $this->createCachedModelsTable()
+            ->createRemoteModelsTable();
 
-        $this->createCachedModelsTable();
-        $this->createRemoteModelsTable();
+        $this->faker = Factory::create();
     }
 
     /** @test */
@@ -50,6 +50,8 @@ class CacheReaderTest extends TestCase
             $table->string('name');
             $table->timestamps();
         });
+
+        return $this;
     }
 
     private function createRemoteModelsTable()
