@@ -12,8 +12,6 @@ trait CacheReader
             return;
         }
 
-        $model = null;
-
         if (!cache()->has($class.':'.$id)) {
             $model = $class::findOrFail($id);
 
@@ -27,6 +25,6 @@ trait CacheReader
             $class::addOrUpdateInCache($model);
         }
 
-        return $model ?: cache()->get($class.':'.$id);
+        return $model ?? cache()->get($class.':'.$id);
     }
 }

@@ -37,10 +37,7 @@ class CacheReaderTest extends TestCase
             cache()->has('CachedModel:'.$cachedModel->id)
         );
 
-        $this->assertEquals(
-            $cachedModel,
-            $remoteModel->getCachedModel()
-        );
+        $this->assertEquals($cachedModel, $remoteModel->getCachedModel());
     }
 
     private function createCachedModelsTable()
