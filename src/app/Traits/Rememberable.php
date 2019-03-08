@@ -2,6 +2,9 @@
 
 namespace LaravelEnso\RememberableModels\app\Traits;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+
 trait Rememberable
 {
     // protected static $cacheLifetime = 600; // optional
@@ -26,16 +29,16 @@ trait Rememberable
         $cacheLifetime = $model->cacheLifetime
             ?: config('enso.config.cacheLifetime');
 
-        cache()->put(
+        Cache::put(
             get_class($model).':'.$model->id,
             $model,
-            $cacheLifetime
+            Carbon::now()->addMinutes($cacheLifetime)
         );
     }
 
     private static function removeFromCache($model)
     {
-        cache()->forget(
+        Cache::forget(
             get_class($model).':'.$model->id
         );
     }

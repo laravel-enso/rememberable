@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\RememberableModels\app\Traits;
 
+use Illuminate\Support\Facades\Cache;
 use LaravelEnso\RememberableModels\app\Exceptions\RememberableException;
 
 trait CacheReader
@@ -12,7 +13,7 @@ trait CacheReader
             return;
         }
 
-        if (! cache()->has($class.':'.$id)) {
+        if (! Cache::has($class.':'.$id)) {
             $model = $class::findOrFail($id);
 
             if (! method_exists($model, 'addOrUpdateInCache')) {
@@ -25,6 +26,6 @@ trait CacheReader
             $class::addOrUpdateInCache($model);
         }
 
-        return $model ?? cache()->get($class.':'.$id);
+        return $model ?? Cache::get($class.':'.$id);
     }
 }
