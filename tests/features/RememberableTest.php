@@ -10,7 +10,7 @@ class RememberableTest extends TestCase
 {
     private $faker;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
