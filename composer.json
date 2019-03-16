@@ -20,6 +20,7 @@
     ],
     "require": {
         "php": ">=7.1.0",
+        "laravel-enso/helpers": "1.10.*",
         "laravel/framework": "5.8.*"
     },
     "autoload": {
