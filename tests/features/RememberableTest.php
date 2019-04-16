@@ -1,70 +1,72 @@
 <?php
 
 use Faker\Factory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Schema;
-use LaravelEnso\RememberableModels\app\Traits\Rememberable;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\Rememberable\app\Traits\Rememberable;
 
 class RememberableTest extends TestCase
 {
     private $faker;
+    private $model;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->createRememberableModelsTable();
-
         $this->faker = Factory::create();
+
+        $this->createTestModelsTable();
+        
+        $this->model = $this->createTestModel();
     }
 
     /** @test */
-    public function adds_model_to_cache_when_creating()
+    public function caches_model_when_creating()
     {
-        $rememberableModel = $this->createRememberableModel();
-
-        $this->assertEquals(
-            $rememberableModel,
-            cache()->get('RememberableModel:'.$rememberableModel->id)
-        );
+        $this->assertTrue($this->model->is(
+            cache()->get($this->model->getCacheKey())
+        ));
     }
 
     /** @test */
-    public function updates_model_in_cache_when_updating()
+    public function updates_cached_model_when_updating()
     {
-        $rememberableModel = $this->createRememberableModel();
-
-        $rememberableModel->name = 'Updated';
-
-        $rememberableModel->save();
+        $this->model->update(['name' => 'Updated']);
 
         $this->assertEquals(
             'Updated',
-            cache()->get('RememberableModel:'.$rememberableModel->id)->name
+            cache()->get($this->model->getCacheKey())->name
         );
     }
 
     /** @test */
-    public function removes_model_from_cache_when_deleting()
+    public function removes_cached_model_from_cache_when_deleting()
     {
-        $rememberableModel = $this->createRememberableModel();
-
-        $rememberableModel->delete();
+        $this->model->delete();
 
         $this->assertFalse(
-            cache()->has('RememberableModel'.$rememberableModel->id)
+            cache()->has($this->model->getCacheKey())
         );
     }
+    
+    /** @test */
+    public function gets_cached_model()
+    {
+        $this->assertTrue($this->model->is(
+            RememberableModel::cacheGet($this->model->id)
+        ));
+    }
 
-    private function createRememberableModel()
+    private function createTestModel()
     {
         return RememberableModel::create([
             'name' => $this->faker->word
         ]);
     }
 
-    private function createRememberableModelsTable()
+    private function createTestModelsTable()
     {
         Schema::create('rememberable_models', function ($table) {
             $table->increments('id');
@@ -77,6 +79,8 @@ class RememberableTest extends TestCase
 class RememberableModel extends Model
 {
     use Rememberable;
+
+    protected $cacheLifetime = 100;
 
     protected $fillable = ['name'];
 }

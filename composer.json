@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelEnso\\RememberableModels\\": "src/"
+            "LaravelEnso\\Rememberable\\": "src/"
         }
     }
 }

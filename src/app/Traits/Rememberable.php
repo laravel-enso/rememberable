@@ -1,45 +1,64 @@
 <?php
 
-namespace LaravelEnso\RememberableModels\app\Traits;
+namespace LaravelEnso\Rememberable\app\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 trait Rememberable
 {
-    // protected static $cacheLifetime = 600; // optional
+    // protected $cacheLifetime = 600 || 'forever'; // optional
 
     protected static function bootRememberable()
     {
         self::created(function ($model) {
-            self::addOrUpdateInCache($model);
+            $model->cachePut();
         });
 
         self::updated(function ($model) {
-            self::addOrUpdateInCache($model);
+            $model->cachePut();
         });
 
         self::deleted(function ($model) {
-            self::removeFromCache($model);
+            $model->cacheForget();
         });
     }
 
-    public static function addOrUpdateInCache($model)
+    public function cachePut()
     {
-        $cacheLifetime = $model->cacheLifetime
-            ?: config('enso.config.cacheLifetime');
+        $cacheLifetime = $this->cacheLifetime
+            ?? config('enso.config.cacheLifetime');
+
+        if ($cacheLifetime === 'forever') {
+            Cache::forever($this->getCacheKey(), $this);
+
+            return;
+        }
 
         Cache::put(
-            get_class($model).':'.$model->id,
-            $model,
-            Carbon::now()->addMinutes($cacheLifetime)
+            $this->getCacheKey(), $this, Carbon::now()->addMinutes($cacheLifetime)
         );
     }
 
-    private static function removeFromCache($model)
+    private function cacheForget()
     {
-        Cache::forget(
-            get_class($model).':'.$model->id
-        );
+        Cache::forget($this->getCacheKey());
+    }
+
+    public static function cacheGet($id)
+    {
+        $key = (new static)->getTable().':'.$id;
+
+        if (! Cache::has($key)) {
+            $model = self::findOrFail($id);
+            $model->cachePut();
+        }
+
+        return $model ?? Cache::get($key);
+    }
+
+    public function getCacheKey()
+    {
+        return $this->getTable().':'.$this->getKey();
     }
 }
