@@ -52,9 +52,11 @@ trait Rememberable
         if (! Cache::has($key)) {
             $model = self::findOrFail($id);
             $model->cachePut();
+
+            return $model;
         }
 
-        return $model ?? Cache::get($key);
+        return Cache::get($key);
     }
 
     public function getCacheKey()

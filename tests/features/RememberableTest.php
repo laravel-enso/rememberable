@@ -18,7 +18,7 @@ class RememberableTest extends TestCase
         $this->faker = Factory::create();
 
         $this->createTestModelsTable();
-        
+
         $this->model = $this->createTestModel();
     }
 
@@ -50,7 +50,7 @@ class RememberableTest extends TestCase
             cache()->has($this->model->getCacheKey())
         );
     }
-    
+
     /** @test */
     public function gets_cached_model()
     {
