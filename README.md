@@ -22,7 +22,7 @@ To install outside of Enso: `composer require laravel-enso/rememberable`
 
 - comes with a trait that provides helper methods for quick and easy caching usage (setting and retrieving)
 - the cache lifetime may be set per model or the per-project
-- uses the Laravel `cache()` helper method so is transparent to the cache mechanism/implementation
+- uses the Laravel `cache()` helper method so it is transparent to the cache mechanism/implementation
 
 ### Configuration & Usage
 
