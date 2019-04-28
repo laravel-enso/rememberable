@@ -49,14 +49,13 @@ trait Rememberable
     {
         $key = (new static)->getTable().':'.$id;
 
-        if (! Cache::has($key)) {
-            $model = self::findOrFail($id);
-            $model->cachePut();
-
-            return $model;
+        if (Cache::has($key)) {
+            return Cache::get($key);
         }
 
-        return Cache::get($key);
+        $model = self::find($id);
+
+        return tap($model)->cachePut();
     }
 
     public function getCacheKey()
