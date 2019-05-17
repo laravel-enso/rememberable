@@ -7,7 +7,7 @@
         "laravel-cache",
         "model-cache"
     ],
-    "homepage": "https://github.com/laravel-enso/Rememberable",
+    "homepage": "https://github.com/laravel-enso/rememberable",
     "type": "library",
     "license": "MIT",
     "authors": [
