@@ -55,7 +55,7 @@ trait Rememberable
 
         $model = self::find($id);
 
-        return tap($model)->cachePut();
+        return $model ? tap($model)->cachePut() : null;
     }
 
     public function getCacheKey()
