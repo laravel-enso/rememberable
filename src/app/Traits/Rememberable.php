@@ -53,7 +53,7 @@ trait Rememberable
             return Cache::get($key);
         }
 
-        $model = self::find($id);
+        $model = static::find($id);
 
         return $model ? tap($model)->cachePut() : null;
     }
