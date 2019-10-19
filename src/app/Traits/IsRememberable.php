@@ -53,22 +53,22 @@ trait IsRememberable
         return $model ? tap($model)->cachePut() : null;
     }
 
-    private static function getFromCache($key, $i = 0)
+    private static function getFromCache($key, $index = 0)
     {
-        if ($i >= count(self::$layers)) {
+        if ($index >= count(self::$layers)) {
             return;
         }
 
-        $model = self::$layers[$i]::getInstance()->cacheGet($key);
+        $model = self::$layers[$index]::getInstance()->cacheGet($key);
 
         if ($model !== null) {
             return $model;
         }
 
-        $model = self::getFromCache($key, $i + 1);
+        $model = self::getFromCache($key, $index + 1);
 
         if ($model !== null) {
-            self::$layers[$i]::getInstance()->cachePut($model);
+            self::$layers[$index]::getInstance()->cachePut($model);
         }
 
         return $model;
