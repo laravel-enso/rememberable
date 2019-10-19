@@ -4,7 +4,8 @@ use Faker\Factory;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Rememberable\app\Traits\Rememberable;
+use LaravelEnso\Rememberable\app\Traits\IsRememberable;
+use LaravelEnso\Rememberable\app\Contracts\Rememberable;
 
 class RememberableTest extends TestCase
 {
@@ -59,6 +60,20 @@ class RememberableTest extends TestCase
         ));
     }
 
+    /** @test */
+    public function gets_cached_model_from_memory_layer()
+    {
+        RememberableModel::cacheGet($this->model->id);
+
+        cache()->forget($this->model->getCacheKey());
+
+        $this->assertTrue($this->model->is(
+            RememberableModel::cacheGet($this->model->id)
+        ));
+
+        $this->assertFalse(cache()->has($this->model->getCacheKey()));
+    }
+
     private function createTestModel()
     {
         return RememberableModel::create([
@@ -76,9 +91,9 @@ class RememberableTest extends TestCase
     }
 }
 
-class RememberableModel extends Model
+class RememberableModel extends Model implements Rememberable
 {
-    use Rememberable;
+    use IsRememberable;
 
     protected $cacheLifetime = 100;
 
