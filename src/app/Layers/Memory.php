@@ -20,7 +20,6 @@ class Memory implements Driver
 
     private function __construct()
     {
-
     }
 
     public function cachePut(Rememberable $rememberable)

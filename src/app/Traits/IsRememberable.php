@@ -53,9 +53,10 @@ trait IsRememberable
         return $model ? tap($model)->cachePut() : null;
     }
 
-    private static function getFromCache($key, $i = 0) {
+    private static function getFromCache($key, $i = 0)
+    {
         if ($i >= count(self::$layers)) {
-            return null;
+            return;
         }
 
         $model = self::$layers[$i]::getInstance()->cacheGet($key);
@@ -66,7 +67,7 @@ trait IsRememberable
 
         $model = self::getFromCache($key, $i + 1);
 
-        if ( $model != null) {
+        if ($model !== null) {
             self::$layers[$i]::getInstance()->cachePut($model);
         }
 
