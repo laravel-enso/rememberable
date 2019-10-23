@@ -5,13 +5,11 @@ namespace LaravelEnso\Rememberable\app\Traits;
 use LaravelEnso\Rememberable\app\Layers\Cache;
 use LaravelEnso\Rememberable\app\Layers\Memory;
 
-trait IsRememberable
+trait Rememberable
 {
-    private static $layers = [Memory::class, Cache::class];
-
     // protected $cacheLifetime = 600 || 'forever'; // optional
 
-    protected static function bootIsRememberable()
+    protected static function bootRememberable()
     {
         self::created(function ($model) {
             $model->cachePut();
@@ -23,20 +21,6 @@ trait IsRememberable
 
         self::deleted(function ($model) {
             $model->cacheForget();
-        });
-    }
-
-    public function cachePut()
-    {
-        collect(static::$layers)->each(function ($layer) {
-            $layer::getInstance()->cachePut($this);
-        });
-    }
-
-    private function cacheForget()
-    {
-        collect(static::$layers)->each(function ($layer) {
-            $layer::getInstance()->cacheForget($this);
         });
     }
 
@@ -53,22 +37,32 @@ trait IsRememberable
         return $model ? tap($model)->cachePut() : null;
     }
 
-    private static function getFromCache($key, $index = 0)
+    public function cachePut()
     {
-        if ($index >= count(self::$layers)) {
-            return;
-        }
+        Memory::getInstance()->cachePut($this);
 
-        $model = self::$layers[$index]::getInstance()->cacheGet($key);
+        Cache::getInstance()->cachePut($this);
+    }
+
+    private function cacheForget()
+    {
+        Memory::getInstance()->cacheForget($this);
+
+        Cache::getInstance()->cacheForget($this);
+    }
+
+    private static function getFromCache($key)
+    {
+        $model = Memory::getInstance()->cacheGet($key);
 
         if ($model !== null) {
             return $model;
         }
 
-        $model = self::getFromCache($key, $index + 1);
+        $model = Cache::getInstance()->cacheGet($key);
 
         if ($model !== null) {
-            self::$layers[$index]::getInstance()->cachePut($model);
+            Memory::getInstance()->cachePut($model);
         }
 
         return $model;

@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\Rememberable\app\Layers;
 
+use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Rememberable\app\Contracts\Driver;
-use LaravelEnso\Rememberable\app\Contracts\Rememberable;
 
 class Memory implements Driver
 {
@@ -13,23 +13,18 @@ class Memory implements Driver
 
     public static function getInstance()
     {
-        self::$instance = self::$instance ?: new static();
-
-        return self::$instance;
+        return self::$instance
+            ?? self::$instance = new static();
     }
 
-    private function __construct()
+    public function cachePut(Model $model)
     {
+        self::$cache[$model->getCacheKey()] = $model;
     }
 
-    public function cachePut(Rememberable $rememberable)
+    public function cacheForget(Model $model)
     {
-        self::$cache[$rememberable->getCacheKey()] = $rememberable;
-    }
-
-    public function cacheForget(Rememberable $rememberable)
-    {
-        unset(self::$cache[$rememberable->getCacheKey()]);
+        unset(self::$cache[$model->getCacheKey()]);
     }
 
     public function cacheGet($key)

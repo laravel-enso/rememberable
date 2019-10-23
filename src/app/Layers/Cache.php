@@ -3,9 +3,9 @@
 namespace LaravelEnso\Rememberable\app\Layers;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Rememberable\app\Contracts\Driver;
-use Illuminate\Support\Facades\Cache as LaravelCache;
-use LaravelEnso\Rememberable\app\Contracts\Rememberable;
+use Illuminate\Support\Facades\Cache as CacheFacade;
 
 class Cache implements Driver
 {
@@ -13,37 +13,32 @@ class Cache implements Driver
 
     public static function getInstance()
     {
-        self::$instance = self::$instance ?: new static();
-
-        return self::$instance;
+        return self::$instance
+            ?? self::$instance = new static();
     }
 
-    private function __construct()
+    public function cachePut(Model $model)
     {
-    }
-
-    public function cachePut(Rememberable $rememberable)
-    {
-        if ($rememberable->getCacheLifetime() === 'forever') {
-            LaravelCache::forever($this->getCacheKey(), $this);
+        if ($model->getCacheLifetime() === 'forever') {
+            CacheFacade::forever($this->getCacheKey(), $this);
 
             return;
         }
 
-        LaravelCache::put(
-            $rememberable->getCacheKey(),
-            $rememberable,
-            Carbon::now()->addMinutes($rememberable->getCacheLifetime())
+        CacheFacade::put(
+            $model->getCacheKey(),
+            $model,
+            Carbon::now()->addMinutes($model->getCacheLifetime())
         );
     }
 
-    public function cacheForget(Rememberable $rememberable)
+    public function cacheForget(Model $model)
     {
-        LaravelCache::forget($rememberable->getCacheKey());
+        CacheFacade::forget($model->getCacheKey());
     }
 
     public function cacheGet($key)
     {
-        return LaravelCache::get($key);
+        return CacheFacade::get($key);
     }
 }
