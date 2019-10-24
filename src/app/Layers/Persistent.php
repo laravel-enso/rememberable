@@ -3,11 +3,11 @@
 namespace LaravelEnso\Rememberable\app\Layers;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Rememberable\app\Contracts\Driver;
-use Illuminate\Support\Facades\Cache as CacheFacade;
 
-class Cache implements Driver
+class Persistent implements Driver
 {
     private static $instance;
 
@@ -20,12 +20,12 @@ class Cache implements Driver
     public function cachePut(Model $model)
     {
         if ($model->getCacheLifetime() === 'forever') {
-            CacheFacade::forever($this->getCacheKey(), $this);
+            Cache::forever($this->getCacheKey(), $this);
 
             return;
         }
 
-        CacheFacade::put(
+        Cache::put(
             $model->getCacheKey(),
             $model,
             Carbon::now()->addMinutes($model->getCacheLifetime())
@@ -34,11 +34,11 @@ class Cache implements Driver
 
     public function cacheForget(Model $model)
     {
-        CacheFacade::forget($model->getCacheKey());
+        Cache::forget($model->getCacheKey());
     }
 
     public function cacheGet($key)
     {
-        return CacheFacade::get($key);
+        return Cache::get($key);
     }
 }

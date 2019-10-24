@@ -5,7 +5,7 @@ namespace LaravelEnso\Rememberable\app\Layers;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Rememberable\app\Contracts\Driver;
 
-class Memory implements Driver
+class Volatile implements Driver
 {
     private static $instance;
 

@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\Rememberable\app\Traits;
 
-use LaravelEnso\Rememberable\app\Layers\Cache;
-use LaravelEnso\Rememberable\app\Layers\Memory;
+use LaravelEnso\Rememberable\app\Layers\Volatile as VolatileLayer;
+use LaravelEnso\Rememberable\app\Layers\Persistent as PersistentLayer;
 
 trait Rememberable
 {
@@ -39,30 +39,30 @@ trait Rememberable
 
     public function cachePut()
     {
-        Memory::getInstance()->cachePut($this);
+        VolatileLayer::getInstance()->cachePut($this);
 
-        Cache::getInstance()->cachePut($this);
+        PersistentLayer::getInstance()->cachePut($this);
     }
 
     private function cacheForget()
     {
-        Memory::getInstance()->cacheForget($this);
+        VolatileLayer::getInstance()->cacheForget($this);
 
-        Cache::getInstance()->cacheForget($this);
+        PersistentLayer::getInstance()->cacheForget($this);
     }
 
     private static function getFromCache($key)
     {
-        $model = Memory::getInstance()->cacheGet($key);
+        $model = VolatileLayer::getInstance()->cacheGet($key);
 
         if ($model !== null) {
             return $model;
         }
 
-        $model = Cache::getInstance()->cacheGet($key);
+        $model = PersistentLayer::getInstance()->cacheGet($key);
 
         if ($model !== null) {
-            Memory::getInstance()->cachePut($model);
+            VolatileLayer::getInstance()->cachePut($model);
         }
 
         return $model;
