@@ -2,6 +2,7 @@
 
 use Faker\Factory;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Rememberable\app\Traits\Rememberable;
@@ -26,7 +27,7 @@ class RememberableTest extends TestCase
     public function caches_model_when_creating()
     {
         $this->assertTrue($this->model->is(
-            cache()->get($this->model->getCacheKey())
+            Cache::get($this->model->getCacheKey())
         ));
     }
 
@@ -37,7 +38,7 @@ class RememberableTest extends TestCase
 
         $this->assertEquals(
             'Updated',
-            cache()->get($this->model->getCacheKey())->name
+            Cache::get($this->model->getCacheKey())->name
         );
     }
 
@@ -47,7 +48,7 @@ class RememberableTest extends TestCase
         $this->model->delete();
 
         $this->assertFalse(
-            cache()->has($this->model->getCacheKey())
+            Cache::has($this->model->getCacheKey())
         );
     }
 
@@ -57,6 +58,20 @@ class RememberableTest extends TestCase
         $this->assertTrue($this->model->is(
             RememberableModel::cacheGet($this->model->id)
         ));
+    }
+
+    /** @test */
+    public function gets_cached_model_from_memory_layer()
+    {
+        RememberableModel::cacheGet($this->model->id);
+
+        Cache::forget($this->model->getCacheKey());
+
+        $this->assertTrue($this->model->is(
+            RememberableModel::cacheGet($this->model->id)
+        ));
+
+        $this->assertFalse(Cache::has($this->model->getCacheKey()));
     }
 
     private function createTestModel()

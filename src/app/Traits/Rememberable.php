@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\Rememberable\app\Traits;
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
+use LaravelEnso\Rememberable\app\Layers\Volatile as VolatileLayer;
+use LaravelEnso\Rememberable\app\Layers\Persistent as PersistentLayer;
 
 trait Rememberable
 {
@@ -24,33 +24,12 @@ trait Rememberable
         });
     }
 
-    public function cachePut()
-    {
-        $cacheLifetime = $this->cacheLifetime
-            ?? config('enso.config.cacheLifetime');
-
-        if ($cacheLifetime === 'forever') {
-            Cache::forever($this->getCacheKey(), $this);
-
-            return;
-        }
-
-        Cache::put(
-            $this->getCacheKey(), $this, Carbon::now()->addMinutes($cacheLifetime)
-        );
-    }
-
-    private function cacheForget()
-    {
-        Cache::forget($this->getCacheKey());
-    }
-
     public static function cacheGet($id)
     {
         $key = (new static)->getTable().':'.$id;
 
-        if (Cache::has($key)) {
-            return Cache::get($key);
+        if ($model = self::getFromCache($key)) {
+            return $model;
         }
 
         $model = static::find($id);
@@ -58,8 +37,45 @@ trait Rememberable
         return $model ? tap($model)->cachePut() : null;
     }
 
+    public function cachePut()
+    {
+        VolatileLayer::getInstance()->cachePut($this);
+
+        PersistentLayer::getInstance()->cachePut($this);
+    }
+
+    private function cacheForget()
+    {
+        VolatileLayer::getInstance()->cacheForget($this);
+
+        PersistentLayer::getInstance()->cacheForget($this);
+    }
+
+    private static function getFromCache($key)
+    {
+        $model = VolatileLayer::getInstance()->cacheGet($key);
+
+        if ($model !== null) {
+            return $model;
+        }
+
+        $model = PersistentLayer::getInstance()->cacheGet($key);
+
+        if ($model !== null) {
+            VolatileLayer::getInstance()->cachePut($model);
+        }
+
+        return $model;
+    }
+
     public function getCacheKey()
     {
         return $this->getTable().':'.$this->getKey();
+    }
+
+    public function getCacheLifetime()
+    {
+        return $this->cacheLifetime
+            ?? config('enso.config.cacheLifetime');
     }
 }
