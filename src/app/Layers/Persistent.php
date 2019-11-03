@@ -20,7 +20,7 @@ class Persistent implements Driver
     public function cachePut(Model $model)
     {
         if ($model->getCacheLifetime() === 'forever') {
-            Cache::forever($this->getCacheKey(), $this);
+            Cache::forever($model->getCacheKey(), $model);
 
             return;
         }
