@@ -3,8 +3,8 @@
 namespace LaravelEnso\Rememberable\app\Layers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use LaravelEnso\Rememberable\app\Contracts\Driver;
 
 class Persistent implements Driver

@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\Rememberable\app\Traits;
 
-use LaravelEnso\Rememberable\app\Layers\Volatile as VolatileLayer;
 use LaravelEnso\Rememberable\app\Layers\Persistent as PersistentLayer;
+use LaravelEnso\Rememberable\app\Layers\Volatile as VolatileLayer;
 
 trait Rememberable
 {
