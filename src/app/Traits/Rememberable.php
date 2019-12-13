@@ -26,9 +26,10 @@ trait Rememberable
 
     public static function cacheGet($id)
     {
-        $key = (new static)->getTable().':'.$id;
+        $key = (new static())->getTable().':'.$id;
+        $model = self::getFromCache($key);
 
-        if ($model = self::getFromCache($key)) {
+        if ($model) {
             return $model;
         }
 
