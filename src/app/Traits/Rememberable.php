@@ -11,11 +11,11 @@ trait Rememberable
 
     protected static function bootRememberable()
     {
-        self::created(fn($model) => $model->cachePut());
+        self::created(fn ($model) => $model->cachePut());
 
-        self::updated(fn($model) => $model->cachePut());
+        self::updated(fn ($model) => $model->cachePut());
 
-        self::deleted(fn($model) => $model->cacheForget());
+        self::deleted(fn ($model) => $model->cacheForget());
     }
 
     public static function cacheGet($id)
