@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\Rememberable\app\Contracts;
+namespace LaravelEnso\Rememberable\App\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 

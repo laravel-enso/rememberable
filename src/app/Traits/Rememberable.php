@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelEnso\Rememberable\app\Traits;
+namespace LaravelEnso\Rememberable\App\Traits;
 
-use LaravelEnso\Rememberable\app\Layers\Persistent as PersistentLayer;
-use LaravelEnso\Rememberable\app\Layers\Volatile as VolatileLayer;
+use LaravelEnso\Rememberable\App\Layers\Persistent as PersistentLayer;
+use LaravelEnso\Rememberable\App\Layers\Volatile as VolatileLayer;
 
 trait Rememberable
 {
     // protected $cacheLifetime = 600 || 'forever'; // optional
 
-    protected static function bootRememberable()
+    public static function bootRememberable()
     {
         self::created(fn ($model) => $model->cachePut());
 
@@ -39,6 +39,17 @@ trait Rememberable
         PersistentLayer::getInstance()->cachePut($this);
     }
 
+    public function getCacheKey()
+    {
+        return $this->getTable().':'.$this->getKey();
+    }
+
+    public function getCacheLifetime()
+    {
+        return $this->cacheLifetime
+            ?? config('enso.config.cacheLifetime');
+    }
+
     private function cacheForget()
     {
         VolatileLayer::getInstance()->cacheForget($this);
@@ -61,16 +72,5 @@ trait Rememberable
         }
 
         return $model;
-    }
-
-    public function getCacheKey()
-    {
-        return $this->getTable().':'.$this->getKey();
-    }
-
-    public function getCacheLifetime()
-    {
-        return $this->cacheLifetime
-            ?? config('enso.config.cacheLifetime');
     }
 }

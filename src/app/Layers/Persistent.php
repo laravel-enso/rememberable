@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelEnso\Rememberable\app\Layers;
+namespace LaravelEnso\Rememberable\App\Layers;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use LaravelEnso\Rememberable\app\Contracts\Driver;
+use LaravelEnso\Rememberable\App\Contracts\Driver;
 
 class Persistent implements Driver
 {
@@ -24,11 +24,9 @@ class Persistent implements Driver
             return;
         }
 
-        Cache::put(
-            $model->getCacheKey(),
-            $model,
-            Carbon::now()->addMinutes($model->getCacheLifetime())
-        );
+        $duration = Carbon::now()->addMinutes($model->getCacheLifetime());
+
+        Cache::put($model->getCacheKey(), $model, $duration);
     }
 
     public function cacheForget(Model $model)

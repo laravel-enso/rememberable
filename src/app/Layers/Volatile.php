@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelEnso\Rememberable\app\Layers;
+namespace LaravelEnso\Rememberable\App\Layers;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Rememberable\app\Contracts\Driver;
+use LaravelEnso\Rememberable\App\Contracts\Driver;
 
 class Volatile implements Driver
 {
