@@ -20,6 +20,10 @@ trait Rememberable
 
     public static function cacheGet($id)
     {
+        if ($id === null) {
+            return;
+        }
+
         $key = (new static())->getTable().':'.$id;
         $model = self::getFromCache($key);
 
