@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\Rememberable\App\Traits;
 
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\Rememberable\App\Layers\Persistent as PersistentLayer;
 use LaravelEnso\Rememberable\App\Layers\Volatile as VolatileLayer;
 
@@ -51,7 +52,7 @@ trait Rememberable
     public function getCacheLifetime()
     {
         return $this->cacheLifetime
-            ?? config('enso.config.cacheLifetime');
+            ?? Config::get('enso.config.cacheLifetime');
     }
 
     private function cacheForget()
