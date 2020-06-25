@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelEnso\Rememberable\App\Traits;
+namespace LaravelEnso\Rememberable\Traits;
 
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\Rememberable\App\Layers\Persistent as PersistentLayer;
-use LaravelEnso\Rememberable\App\Layers\Volatile as VolatileLayer;
+use LaravelEnso\Rememberable\Layers\Persistent as PersistentLayer;
+use LaravelEnso\Rememberable\Layers\Volatile as VolatileLayer;
 
 trait Rememberable
 {

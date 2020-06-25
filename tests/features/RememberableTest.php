@@ -5,7 +5,7 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Rememberable\App\Traits\Rememberable;
+use LaravelEnso\Rememberable\Traits\Rememberable;
 
 class RememberableTest extends TestCase
 {

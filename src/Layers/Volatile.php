@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelEnso\Rememberable\App\Layers;
+namespace LaravelEnso\Rememberable\Layers;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Rememberable\App\Contracts\Driver;
+use LaravelEnso\Rememberable\Contracts\Driver;
 
 class Volatile implements Driver
 {
-    private static $instance;
+    private static Volatile $instance;
 
-    private static $cache = [];
+    private static array $cache = [];
 
     public static function getInstance()
     {

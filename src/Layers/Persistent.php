@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelEnso\Rememberable\App\Layers;
+namespace LaravelEnso\Rememberable\Layers;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use LaravelEnso\Rememberable\App\Contracts\Driver;
+use LaravelEnso\Rememberable\Contracts\Driver;
 
 class Persistent implements Driver
 {
-    private static $instance;
+    private static Persistent $instance;
 
     public static function getInstance()
     {
