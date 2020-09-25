@@ -2,9 +2,8 @@
 
 namespace LaravelEnso\Rememberable\Traits;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\Rememberable\Layers\Persistent as PersistentLayer;
-use LaravelEnso\Rememberable\Layers\Volatile as VolatileLayer;
 
 trait Rememberable
 {
@@ -16,7 +15,7 @@ trait Rememberable
 
         self::updated(fn ($model) => $model->cachePut());
 
-        self::deleted(fn ($model) => $model->cacheForget());
+        self::deleted(fn ($model) => Cache::forget($model->getCacheKey()));
     }
 
     public static function cacheGet($id)
@@ -25,10 +24,7 @@ trait Rememberable
             return;
         }
 
-        $key = (new static())->getTable().':'.$id;
-        $model = self::getFromCache($key);
-
-        if ($model) {
+        if ($model = Cache::get((new static())->getTable().':'.$id)) {
             return $model;
         }
 
@@ -39,9 +35,7 @@ trait Rememberable
 
     public function cachePut()
     {
-        VolatileLayer::getInstance()->cachePut($this);
-
-        PersistentLayer::getInstance()->cachePut($this);
+        Cache::put($this->getCacheKey(), $this);
     }
 
     public function getCacheKey()
@@ -49,33 +43,9 @@ trait Rememberable
         return $this->getTable().':'.$this->getKey();
     }
 
-    public function getCacheLifetime()
+    protected function getCacheLifetime()
     {
         return $this->cacheLifetime
             ?? Config::get('enso.config.cacheLifetime');
-    }
-
-    private function cacheForget()
-    {
-        VolatileLayer::getInstance()->cacheForget($this);
-
-        PersistentLayer::getInstance()->cacheForget($this);
-    }
-
-    private static function getFromCache($key)
-    {
-        $model = VolatileLayer::getInstance()->cacheGet($key);
-
-        if ($model !== null) {
-            return $model;
-        }
-
-        $model = PersistentLayer::getInstance()->cacheGet($key);
-
-        if ($model !== null) {
-            VolatileLayer::getInstance()->cachePut($model);
-        }
-
-        return $model;
     }
 }
