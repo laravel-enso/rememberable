@@ -38,9 +38,12 @@ trait Rememberable
 
     public function cachePut()
     {
-        return $this->getCacheLifetime() === 'forever'
-            ? Cache::forever($this->getCacheKey(), $this)
-            : Cache::put($this->getCacheKey(), $this, Carbon::now()->addMinutes($this->getCacheLifetime()));
+        $limit = $this->getCacheLifetime();
+        $key = $this->getCacheKey();
+
+        return $limit === 'forever'
+            ? Cache::forever($key, $this)
+            : Cache::put($key, $this, Carbon::now()->addMinutes($limit));
     }
 
     public function getCacheKey()
