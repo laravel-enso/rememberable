@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\Rememberable\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
@@ -37,7 +38,12 @@ trait Rememberable
 
     public function cachePut()
     {
-        Cache::put($this->getCacheKey(), $this);
+        $limit = $this->getCacheLifetime();
+        $key = $this->getCacheKey();
+
+        return $limit === 'forever'
+            ? Cache::forever($key, $this)
+            : Cache::put($key, $this, Carbon::now()->addMinutes($limit));
     }
 
     public function getCacheKey()
