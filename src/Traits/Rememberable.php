@@ -24,7 +24,9 @@ trait Rememberable
             return;
         }
 
-        if ($model = Cache::get((new static())->getTable().':'.$id)) {
+        $table = (new static())->getTable();
+
+        if ($model = Cache::get("{$table}:{$id}")) {
             return $model;
         }
 
@@ -40,7 +42,7 @@ trait Rememberable
 
     public function getCacheKey()
     {
-        return $this->getTable().':'.$this->getKey();
+        return "{$this->getTable()}:{$this->getKey()}";
     }
 
     protected function getCacheLifetime()
