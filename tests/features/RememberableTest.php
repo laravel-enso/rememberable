@@ -60,20 +60,6 @@ class RememberableTest extends TestCase
         ));
     }
 
-    /** @test */
-    public function gets_cached_model_from_memory_layer()
-    {
-        RememberableModel::cacheGet($this->model->id);
-
-        Cache::forget($this->model->getCacheKey());
-
-        $this->assertTrue($this->model->is(
-            RememberableModel::cacheGet($this->model->id)
-        ));
-
-        $this->assertFalse(Cache::has($this->model->getCacheKey()));
-    }
-
     private function createTestModel()
     {
         return RememberableModel::create([
