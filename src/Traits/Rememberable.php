@@ -63,11 +63,11 @@ trait Rememberable
     protected function cachePutKey($key)
     {
         $limit = $this->getCacheLifetime();
-        $key = $this->getCacheKey($key);
+        $cacheKey = $this->getCacheKey($key);
 
         return $limit === 'forever'
-            ? Cache::forever($key, $this)
-            : Cache::put($key, $this, Carbon::now()->addMinutes($limit));
+            ? Cache::forever($cacheKey, $this)
+            : Cache::put($cacheKey, $this, Carbon::now()->addMinutes($limit));
     }
 
     protected function getCacheLifetime()
