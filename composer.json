@@ -24,5 +24,13 @@
         "psr-4": {
             "LaravelEnso\\Rememberable\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelEnso\\Rememberable\\AppServiceProvider"
+            ],
+            "aliases": {}
+        }
     }
 }

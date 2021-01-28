@@ -15,11 +15,11 @@ trait Rememberable
 
     public static function bootRememberable()
     {
-        self::created(fn ($model) => $model->cachePut());
+        self::created(fn (self $model) => $model->cachePut());
 
-        self::updated(fn ($model) => $model->cachePut());
+        self::updated(fn (self $model) => $model->cachePut());
 
-        self::deleted(fn ($model) => Cache::forget($model->getCacheKey()));
+        self::deleted(fn (self $model) => $model->cacheForget());
     }
 
     public static function cacheGet($id)
@@ -36,14 +36,14 @@ trait Rememberable
         $model = new static();
 
         throw_unless(
-            in_array($key, $model->remeberableKeys()), Exception::missingKey()
+            $model->remeberableKeys()->contains($key), Exception::missingKey($key)
         );
 
         if ($model = Cache::get("{$model->getTable()}:{$key}:{$value}")) {
             return $model;
         }
 
-        $model = static::firstWhere($key, $id);
+        $model = static::firstWhere($key, $value);
 
         return $model ? tap($model)->cachePut() : null;
     }
@@ -51,16 +51,22 @@ trait Rememberable
     public function cachePut()
     {
         return $this->remeberableKeys()
-            ->map(fn ($key) => $this->cachePutKey($key))
+            ->reduce(fn ($carry, $key) => $this->cachePutKey($key));
+    }
+
+    public function cacheForget()
+    {
+        return $this->remeberableKeys()
+            ->map(fn ($key) => Cache::forget($this->getCacheKey($key)))
             ->last();
     }
 
-    public function getCacheKey($key): string
+    public function getCacheKey(string $key): string
     {
         return "{$this->getTable()}:{$key}:{$this->{$key}}";
     }
 
-    protected function cachePutKey($key)
+    protected function cachePutKey(string $key)
     {
         $limit = $this->getCacheLifetime();
         $cacheKey = $this->getCacheKey($key);
@@ -73,11 +79,13 @@ trait Rememberable
     protected function getCacheLifetime()
     {
         return $this->cacheLifetime
-            ?? Config::get('enso.config.cacheLifetime');
+            ?? Config::get('enso.rememberable.cacheLifetime');
     }
 
     protected function remeberableKeys(): Collection
     {
-        return Collection::wrap($this->rememberableKeys ?? ['id']);
+        return Collection::wrap(
+            $this->rememberableKeys ?? Config::get('enso.rememberable.rememberableKeys')
+        );
     }
 }

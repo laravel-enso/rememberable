@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Factory;
+use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -11,6 +12,7 @@ class RememberableTest extends TestCase
 {
     private $faker;
     private $model;
+    private $key;
 
     public function setUp(): void
     {
@@ -21,13 +23,15 @@ class RememberableTest extends TestCase
         $this->createTestModelsTable();
 
         $this->model = $this->createTestModel();
+
+        $this->key = 'id';
     }
 
     /** @test */
     public function caches_model_when_creating()
     {
         $this->assertTrue($this->model->is(
-            Cache::get($this->model->getCacheKey())
+            Cache::get($this->model->getCacheKey($this->key))
         ));
     }
 
@@ -38,7 +42,7 @@ class RememberableTest extends TestCase
 
         $this->assertEquals(
             'Updated',
-            Cache::get($this->model->getCacheKey())->name
+            Cache::get($this->model->getCacheKey($this->key))->name
         );
     }
 
@@ -48,8 +52,23 @@ class RememberableTest extends TestCase
         $this->model->delete();
 
         $this->assertFalse(
-            Cache::has($this->model->getCacheKey())
+            Cache::has($this->model->getCacheKey($this->key))
         );
+    }
+
+    /** @test */
+    public function can_get_by_custom_key()
+    {
+        $this->assertTrue($this->model->is(
+            $this->model->cacheGetBy('name', $this->model->name)
+        ));
+    }
+
+    /** @test */
+    public function when_key_is_not_in_rememberkeys_should_throw_exception()
+    {
+        $this->expectException(Exception::class);
+        $this->model->cacheGetBy('custom_key', 1);
     }
 
     /** @test */
@@ -82,6 +101,8 @@ class RememberableModel extends Model
     use Rememberable;
 
     protected $cacheLifetime = 100;
+
+    protected $rememberableKeys = ['id', 'name'];
 
     protected $fillable = ['name'];
 }
