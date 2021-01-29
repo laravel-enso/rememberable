@@ -3,57 +3,88 @@
 namespace LaravelEnso\Rememberable\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
 
 trait Rememberable
 {
     // protected $cacheLifetime = 600 || 'forever'; // optional
+    // protected array $rememberableKeys = ['id']; // optional
 
     public static function bootRememberable()
     {
-        self::created(fn ($model) => $model->cachePut());
+        self::created(fn (self $model) => $model->cachePut());
 
-        self::updated(fn ($model) => $model->cachePut());
+        self::updated(fn (self $model) => $model->cachePut());
 
-        self::deleted(fn ($model) => Cache::forget($model->getCacheKey()));
+        self::deleted(fn (self $model) => $model->cacheForget());
     }
 
     public static function cacheGet($id)
     {
-        if ($id === null) {
+        return static::cacheGetBy('id', $id);
+    }
+
+    public static function cacheGetBy(string $key, $value)
+    {
+        if ($value === null) {
             return;
         }
 
-        $table = (new static())->getTable();
+        $model = new static();
 
-        if ($model = Cache::get("{$table}:{$id}")) {
+        $containsKey = $model->remeberableKeys()->contains($key);
+        throw_unless($containsKey, Exception::missingKey($key));
+
+        if ($model = Cache::get("{$model->getTable()}:{$key}:{$value}")) {
             return $model;
         }
 
-        $model = static::find($id);
+        $model = static::firstWhere($key, $value);
 
         return $model ? tap($model)->cachePut() : null;
     }
 
     public function cachePut()
     {
-        $limit = $this->getCacheLifetime();
-        $key = $this->getCacheKey();
-
-        return $limit === 'forever'
-            ? Cache::forever($key, $this)
-            : Cache::put($key, $this, Carbon::now()->addMinutes($limit));
+        return $this->remeberableKeys()
+            ->reduce(fn ($carry, $key) => $this->cachePutKey($key));
     }
 
-    public function getCacheKey()
+    public function cacheForget()
     {
-        return "{$this->getTable()}:{$this->getKey()}";
+        return $this->remeberableKeys()
+            ->map(fn ($key) => Cache::forget($this->getCacheKey($key)))
+            ->last();
+    }
+
+    public function getCacheKey(string $key): string
+    {
+        return "{$this->getTable()}:{$key}:{$this->{$key}}";
+    }
+
+    protected function cachePutKey(string $key)
+    {
+        $limit = $this->getCacheLifetime();
+        $cacheKey = $this->getCacheKey($key);
+
+        return $limit === 'forever'
+            ? Cache::forever($cacheKey, $this)
+            : Cache::put($cacheKey, $this, Carbon::now()->addMinutes($limit));
     }
 
     protected function getCacheLifetime()
     {
         return $this->cacheLifetime
-            ?? Config::get('enso.config.cacheLifetime');
+            ?? Config::get('enso.rememberable.cacheLifetime');
+    }
+
+    protected function remeberableKeys(): Collection
+    {
+        return Collection::wrap(
+            $this->rememberableKeys ?? Config::get('enso.rememberable.rememberableKeys')
+        );
     }
 }
