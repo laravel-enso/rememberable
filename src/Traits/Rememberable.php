@@ -35,9 +35,8 @@ trait Rememberable
 
         $model = new static();
 
-        throw_unless(
-            $model->remeberableKeys()->contains($key), Exception::missingKey($key)
-        );
+        $containsKey = $model->remeberableKeys()->contains($key);
+        throw_unless($containsKey, Exception::missingKey($key));
 
         if ($model = Cache::get("{$model->getTable()}:{$key}:{$value}")) {
             return $model;
