@@ -84,7 +84,8 @@ trait Rememberable
     protected function remeberableKeys(): Collection
     {
         return Collection::wrap(
-            $this->rememberableKeys ?? Config::get('enso.rememberable.rememberableKeys')
+            $this->rememberableKeys
+                ?? Config::get('enso.rememberable.keys')
         );
     }
 }
