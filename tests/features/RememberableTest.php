@@ -79,6 +79,13 @@ class RememberableTest extends TestCase
         ));
     }
 
+    /** @test */
+    public function can_get_polymorphism()
+    {
+        $this->assertEquals(ChildRememberableModel::class, get_class(ChildRememberableModel::cacheGet($this->model->id)));
+        $this->assertEquals(RememberableModel::class, get_class(RememberableModel::cacheGet($this->model->id)));
+    }
+
     private function createTestModel()
     {
         return RememberableModel::create([
@@ -105,4 +112,11 @@ class RememberableModel extends Model
     protected $rememberableKeys = ['id', 'name'];
 
     protected $fillable = ['name'];
+
+    protected $table = 'rememberable_models';
+}
+
+
+class ChildRememberableModel extends RememberableModel
+{
 }

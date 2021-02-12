@@ -62,7 +62,7 @@ trait Rememberable
 
     public function getCacheKey(string $key): string
     {
-        return "{$this->getTable()}:{$key}:{$this->{$key}}";
+        return static::class.".:{$key}:{$this->{$key}}";
     }
 
     protected function cachePutKey(string $key)
