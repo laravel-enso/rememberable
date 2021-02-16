@@ -33,12 +33,11 @@ trait Rememberable
             return;
         }
 
-        $model = new static();
-
-        $containsKey = $model->remeberableKeys()->contains($key);
+        $self = new static();
+        $containsKey = $self->remeberableKeys()->contains($key);
         throw_unless($containsKey, Exception::missingKey($key));
 
-        if ($model = Cache::get("{$model->getTable()}:{$key}:{$value}")) {
+        if ($model = Cache::get($self->getCacheKey($key, $value))) {
             return $model;
         }
 
@@ -50,7 +49,8 @@ trait Rememberable
     public function cachePut()
     {
         return $this->remeberableKeys()
-            ->reduce(fn ($carry, $key) => $this->cachePutKey($key));
+            ->map(fn ($key) => $this->cachePutKey($key))
+            ->last();
     }
 
     public function cacheForget()
@@ -60,9 +60,11 @@ trait Rememberable
             ->last();
     }
 
-    public function getCacheKey(string $key): string
+    public function getCacheKey(string $key, $value = null): string
     {
-        return static::class.".:{$key}:{$this->{$key}}";
+        $value ??= $this->{$key};
+
+        return static::class.".:{$key}:{$value}";
     }
 
     protected function cachePutKey(string $key)
@@ -83,9 +85,9 @@ trait Rememberable
 
     protected function remeberableKeys(): Collection
     {
-        return Collection::wrap(
-            $this->rememberableKeys
-                ?? Config::get('enso.rememberable.keys')
-        );
+        $keys = $this->rememberableKeys
+            ?? Config::get('enso.rememberable.keys');
+
+        return Collection::wrap($keys);
     }
 }
