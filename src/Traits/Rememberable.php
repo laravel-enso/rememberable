@@ -64,7 +64,7 @@ trait Rememberable
     {
         $value ??= $this->{$key};
 
-        return static::class.".:{$key}:{$value}";
+        return static::class.":{$key}:{$value}";
     }
 
     protected function cachePutKey(string $key)
