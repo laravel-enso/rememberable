@@ -34,7 +34,7 @@ trait Rememberable
         }
 
         $self = new static();
-        $containsKey = $self->remeberableKeys()->contains($key);
+        $containsKey = $self->cacheableKeys()->contains($key);
         throw_unless($containsKey, Exception::missingKey($key));
 
         if ($model = Cache::get($self->getCacheKey($key, $value))) {
@@ -48,14 +48,14 @@ trait Rememberable
 
     public function cachePut()
     {
-        return $this->remeberableKeys()
+        return $this->cacheableKeys()
             ->map(fn ($key) => $this->cachePutKey($key))
             ->last();
     }
 
     public function cacheForget()
     {
-        return $this->remeberableKeys()
+        return $this->cacheableKeys()
             ->map(fn ($key) => Cache::forget($this->getCacheKey($key)))
             ->last();
     }
@@ -83,7 +83,7 @@ trait Rememberable
             ?? Config::get('enso.rememberable.cacheLifetime');
     }
 
-    protected function remeberableKeys(): Collection
+    protected function cacheableKeys(): Collection
     {
         $keys = $this->rememberableKeys
             ?? Config::get('enso.rememberable.keys');
