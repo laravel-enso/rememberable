@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'cacheLifetime' => env('CACHE_LIFETIME', 60),
+    'cacheLifetime' => env('CACHE_LIFETIME', 3600),
     'keys' => ['id'],
 ];
