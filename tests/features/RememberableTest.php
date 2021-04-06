@@ -1,12 +1,12 @@
 <?php
 
 use Faker\Factory;
-use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
-use Tests\TestCase;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
 use LaravelEnso\Rememberable\Traits\Rememberable;
+use Tests\TestCase;
 
 class RememberableTest extends TestCase
 {
@@ -89,7 +89,7 @@ class RememberableTest extends TestCase
     private function createTestModel()
     {
         return RememberableModel::create([
-            'name' => $this->faker->word
+            'name' => $this->faker->word,
         ]);
     }
 
@@ -115,7 +115,6 @@ class RememberableModel extends Model
 
     protected $table = 'rememberable_models';
 }
-
 
 class ChildRememberableModel extends RememberableModel
 {
