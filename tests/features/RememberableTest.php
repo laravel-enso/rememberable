@@ -82,8 +82,10 @@ class RememberableTest extends TestCase
     /** @test */
     public function can_get_polymorphism()
     {
-        $this->assertEquals(ChildRememberableModel::class, get_class(ChildRememberableModel::cacheGet($this->model->id)));
-        $this->assertEquals(RememberableModel::class, get_class(RememberableModel::cacheGet($this->model->id)));
+        $class = ChildRememberableModel::cacheGet($this->model->id)::class;
+        $this->assertEquals(ChildRememberableModel::class, $class);
+        $class = RememberableModel::cacheGet($this->model->id)::class;
+        $this->assertEquals(RememberableModel::class, $class);
     }
 
     private function createTestModel()
