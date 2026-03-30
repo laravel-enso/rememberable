@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
 use LaravelEnso\Rememberable\Traits\Rememberable;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RememberableTest extends TestCase
 {
@@ -27,7 +28,7 @@ class RememberableTest extends TestCase
         $this->key = 'id';
     }
 
-    /** @test */
+    #[Test]
     public function caches_model_when_creating()
     {
         $this->assertTrue($this->model->is(
@@ -35,7 +36,7 @@ class RememberableTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function updates_cached_model_when_updating()
     {
         $this->model->update(['name' => 'Updated']);
@@ -46,7 +47,7 @@ class RememberableTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function removes_cached_model_from_cache_when_deleting()
     {
         $this->model->delete();
@@ -56,7 +57,7 @@ class RememberableTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function can_get_by_custom_key()
     {
         $this->assertTrue($this->model->is(
@@ -64,14 +65,14 @@ class RememberableTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function when_key_is_not_in_rememberkeys_should_throw_exception()
     {
         $this->expectException(Exception::class);
         $this->model->cacheGetBy('custom_key', 1);
     }
 
-    /** @test */
+    #[Test]
     public function gets_cached_model()
     {
         $this->assertTrue($this->model->is(
@@ -79,7 +80,7 @@ class RememberableTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function can_get_polymorphism()
     {
         $class = ChildRememberableModel::cacheGet($this->model->id)::class;
