@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -66,6 +67,12 @@ class RememberableTest extends TestCase
     }
 
     #[Test]
+    public function returns_null_when_cache_get_by_value_is_null()
+    {
+        $this->assertNull(RememberableModel::cacheGetBy('name', null));
+    }
+
+    #[Test]
     public function when_key_is_not_in_rememberkeys_should_throw_exception()
     {
         $this->expectException(Exception::class);
@@ -81,12 +88,90 @@ class RememberableTest extends TestCase
     }
 
     #[Test]
+    public function rehydrates_model_from_database_and_caches_it_when_cache_misses()
+    {
+        Cache::forget($this->model->getCacheKey('id'));
+        Cache::forget($this->model->getCacheKey('name'));
+
+        $model = RememberableModel::cacheGetBy('name', $this->model->name);
+
+        $this->assertTrue($this->model->is($model));
+        $this->assertTrue(Cache::has($this->model->getCacheKey('id')));
+        $this->assertTrue(Cache::has($this->model->getCacheKey('name')));
+    }
+
+    #[Test]
     public function can_get_polymorphism()
     {
         $class = ChildRememberableModel::cacheGet($this->model->id)::class;
         $this->assertEquals(ChildRememberableModel::class, $class);
         $class = RememberableModel::cacheGet($this->model->id)::class;
         $this->assertEquals(RememberableModel::class, $class);
+    }
+
+    #[Test]
+    public function uses_global_cache_lifetime_when_model_does_not_define_one()
+    {
+        Carbon::setTestNow($now = Carbon::parse('2026-04-18 12:00:00'));
+        config()->set('enso.rememberable.cacheLifetime', 45);
+
+        Cache::shouldReceive('put')
+            ->twice()
+            ->withArgs(fn ($key, $value, $expiresAt) => $expiresAt->equalTo($now->copy()->addMinutes(45)))
+            ->andReturnTrue();
+
+        $model = new ConfigLifetimeRememberableModel();
+        $model->forceFill(['id' => 1, 'name' => 'config-lifetime']);
+        $model->cachePut();
+
+        Carbon::setTestNow();
+    }
+
+    #[Test]
+    public function caches_models_forever_when_cache_lifetime_is_forever()
+    {
+        Cache::shouldReceive('forever')
+            ->twice()
+            ->withArgs(fn ($key, $value) => $value instanceof ForeverRememberableModel)
+            ->andReturnTrue();
+
+        $model = new ForeverRememberableModel();
+        $model->forceFill(['id' => 1, 'name' => 'forever']);
+        $model->cachePut();
+    }
+
+    #[Test]
+    public function stores_and_forgets_all_configured_rememberable_keys()
+    {
+        $this->assertTrue(Cache::has($this->model->getCacheKey('id')));
+        $this->assertTrue(Cache::has($this->model->getCacheKey('name')));
+
+        $this->model->delete();
+
+        $this->assertFalse(Cache::has($this->model->getCacheKey('id')));
+        $this->assertFalse(Cache::has($this->model->getCacheKey('name')));
+    }
+
+    #[Test]
+    public function uses_global_rememberable_keys_when_model_does_not_define_them()
+    {
+        config()->set('enso.rememberable.keys', ['id', 'name']);
+
+        $model = ConfigKeysRememberableModel::create([
+            'name' => 'global-keys',
+        ]);
+
+        $this->assertTrue(Cache::has($model->getCacheKey('id')));
+        $this->assertTrue(Cache::has($model->getCacheKey('name')));
+    }
+
+    #[Test]
+    public function builds_cache_key_for_explicit_value()
+    {
+        $this->assertSame(
+            RememberableModel::class.':name:explicit',
+            $this->model->getCacheKey('name', 'explicit')
+        );
     }
 
     private function createTestModel()
@@ -121,4 +206,37 @@ class RememberableModel extends Model
 
 class ChildRememberableModel extends RememberableModel
 {
+}
+
+class ConfigLifetimeRememberableModel extends Model
+{
+    use Rememberable;
+
+    protected $rememberableKeys = ['id', 'name'];
+
+    protected $fillable = ['name'];
+
+    protected $table = 'rememberable_models';
+}
+
+class ForeverRememberableModel extends Model
+{
+    use Rememberable;
+
+    protected $cacheLifetime = 'forever';
+
+    protected $rememberableKeys = ['id', 'name'];
+
+    protected $fillable = ['name'];
+
+    protected $table = 'rememberable_models';
+}
+
+class ConfigKeysRememberableModel extends Model
+{
+    use Rememberable;
+
+    protected $fillable = ['name'];
+
+    protected $table = 'rememberable_models';
 }
