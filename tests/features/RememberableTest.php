@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use LaravelEnso\Rememberable\Exceptions\Rememberable as Exception;
 use LaravelEnso\Rememberable\Traits\Rememberable;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class RememberableTest extends TestCase
 {
